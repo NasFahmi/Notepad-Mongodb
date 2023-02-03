@@ -1,0 +1,115 @@
+basic command
+show dbs = untuk menampilkan folder collection yang ada di dbs
+use (nama collection) = digunakan untuk membuka sebuah collection dan juga bisa digunakan untuk membuat collection
+show collections = untuk menampilkan collection yang telah ada
+db.dropDatabase() = didgunakan untuk menghapus collection
+cls = clear terminal
+exit = digunakan untuk exit terminal mongoshell
+
+insert command
+db = untuk mengakses collection, bisa juga untuk melihat collection yang sedang diakses
+db.(nama collection).insertOne({datanya}) = ketika kita tidak mempunyai nama data maka secara otomatis mongodb akan membuatkan collection tersebut
+contoh db.users.insertOne({nama:'Andi'}) = saat disini belum ada collection yang namanya users dan belum ada datanya sama sekai
+mongodb akan membuatkan collection users dan membuat satu data yang memiliki nama : 'Andi'
+
+db.(nama collection).find() = untuk melihat semua datanya berbentuk array of object
+data yang ada di sbeuah collection disebut = document
+jadi crashcourse = database, users = collection, Andi = document
+db.(nama collection).insertMany([{data1},{data2}]) = digunakan untuk membuat data lebih dari 1 sekaligus
+
+Basic Query
+ab.(nama collection).find().limit(2) = menampilkan data yang ada di collection dengan 2 data paling atas saja
+sort = digunakan untuk melihat data dari urutan alphabet dengan format data: 1, 1 untuk true yang artinya urut menruut alphabet dan -1 untuk false yang artinya revers alphabet
+
+ab.(nama collection).find().sort({name:1})
+query bisa juga digunakan menggunakan chaining 
+
+db.users.find().sort({age:-1, firstname:-1}) = pada kasus ini mongodb akan mengurutkan sesuai dengan umur yang paling besar dan setelah ketemu maka akan diurutkan lagi menurut revers alphabet
+db.users.find().sort({age:1, firstname:-1}) akan mengurutkan nebula plain lalu andi budi karena menurut age tidak ada yang berbeda tetapi menruut firstname beda
+jika firstname -1 maka akan menruut nebula terlebih dahulu trus andi tapi jika firstname : 1 maka akan mengurutkan andi dulu lalu nebula sesuai alphabet
+
+db.users.find({data spesifik}) = digunakan untuk menampilkan data secara spesifik
+contoh db.users.find({firstname:"nasrul"}) akan menampilkan data yang memiliki firstname nasrul
+
+ketika sudah menemukan data nya jika ingin melihat hanya beberapa data contoh hanya firstname dan age maka bisa menambah parameter setelah find({data spesifik})
+db.users.find({data spesifik},{data yang ingin ditampilkan})
+contoh db.users.find({firstname:"nasrul"},{firstname:1}) = mongodb cari data yang memiliki firstname : "nasrul" dan tampilkan firstname saja
+
+semua generate akan menampilkan _id, jika kita tidak mengingikannya maka bisa menggunakan _id : 0
+contoh 2 db.users.find({firstname:"nasrul"},{firstname:1,_id:0})
+
+jika kita mau menampilkan semua data tanpa id maka kita bisa menggunakan 
+db.users.find({},{_id:0}) = mongodb tampilkan semua data dengan tanpa id
+
+Complex Query command
+complex query command mulai dari $ dan didalam kurung kurawal
+$eq = equal/sama dengan
+contoh db.users.find({name : {$eq:'Nebula'}}) = mongodb tampilkan data nama yang memiliki nama Nebula
+
+$ne = notequal/tidak sama dengan
+$gt = graterthan/lebih dari
+$lt = lowerthan/kurang dari
+$gte = grater than equal/lebih dari sama dengan
+$lte = lotwer than equal/kurang dari sama dengan
+$in = digunakan untuk menampilkan nama yang ada di sebuah data dan menggunakan array []
+contoh db.users.find({firstname:{$in:['Nasrul','Andi']}}) = mongodb tampilkan data yang mempunyai firstname Nasrul dan Andi
+
+$nin = not in/lawan kata in, menampilkan data yang tdak mmeiliki sebuah data didalamnya
+contoh db.users.find({firstname:{$nin:['Nasrul','Andi']}}) = mongodb tampilkan data yang tiadk mempunyai firstname Nasrul dan Andi
+
+$exists = menampilkan data yang memiliki sebuah artritub didalammnya, exists memiliki nilai true dan false, dan disini null termasuk dalam nilai
+contoh db.users.find({age:{$exists:true}}) = mongodb tampilkan data yang memiliki age 
+$exists digunakan untuk mengecek apakah ada artruibut didalam data jadi jika ada data age yang bernilai null maka data itu termasuk memiliki atritbut age
+
+db.users.find({age : {$gte : 19,$lte:20}}) = mongodb tampilkan data yang memiliki age yang nilainya lebih dari sama dengan 19 dan kurang dari sama dengan 20
+
+db.users.find({age : {$gte : 19,$lte:20}, firstname:"Fahmi"}) = artinya mongodb tampilkan data yang memiliki age yang nilainya lebih dari sama dengan 19 dan kurang dari sama dengan 20 dan memiliki firstname : "Fahmi"
+
+$and sama konsep seperti and di dalam bahasa pemrograman lainnya yang artinya membandingkan 2/lebih data jika nilainya sama maka bernilai true
+untuk meletakkan nilai yang ingin dibandingkan maka di letakkan di dalam array = $and []
+contoh kasus db.users.find({ $and: [{age:{$gte:19}},{firstname:"Fahmi"}]}) = mongodb tampilkan data yang memiliki age lebih dari 19 dan yang memiliki firstname Fahmi
+
+$or sama konsepnya seperti or di dalam bahasa pemrograman laiiinya 
+db.users.find({ $or:[ { age:{ $gte:19 }},{firstname:"Nasrul"}] } ) = mongodb tampilkan data yang memiliki age lebih dari 19 atau firstname yang memiliki nilai Nasrul
+
+agak berbeda jika menggunakan $not 
+$not:{atribut} not tidak menggunakan array tetapi langsung dengan object
+db.users.find({age:{$not:{$lte:19}}}) = artinya mongodb cari data yang memiliki age yang tidak kurang dari sama dengan 19
+
+kita juga bisa membandingkan antara nilai dari sebuah atribut dan atribut yang lainnya dengan menggunakn $expr
+untuk mencari atribut spesifik/yang hanya memiliki atribut tersebt maka menambahkan $didepan nama atribut
+contoh kasus db.users.find({$expr:{$gt:["$utang","$balance"]}}) = mongodb tampilkan data yang memiliki atribut spesifik bernama utang dan balance yang dimana utang lebih dari balance
+untuk mencari nilai yang spesifik maka menggunakan {atributparent.atributchild}
+contoh db.users.findOne({address.city})
+
+
+Update
+update bisa dengan cara menggunakan $set 
+syntax lengkap db.(nama collection).updateOne({spesifik data},{$set:{data yang diubah:nilai}}) spesifik data disini adalah spesifik atribut yang ada di suatu data bisa juga menggunakan id
+contoh db.users.updateOne({_id : ObjectId("63dca00ff452f188843cfc58")},{$set:{age:34}}) == mongodb cari data yang memiliki id ObjectId("63dca00ff452f188843cfc58") dan rubah age nya menjadi 34
+
+$inc digunakn untuk menambah dari suatu nilai di atribut data
+contoh db.users.updateOne({_id : ObjectId("63dca00ff452f188843cfc58")},{$inc:{age:2}}) == mongodb cari data yang memiliki id ObjectId("63dca00ff452f188843cfc58") dan +2 pada age
+
+$rename digunakan untuk mengubah atribut di suatu data 
+contoh db.users.updateOne({_id : ObjectId("63dca00ff452f188843cfc58")},{$rename:{balance:"saldo"}}) == mongodb cari data yang memiliki id ObjectId("63dca00ff452f188843cfc58") dan rename atribut yang berna,a balance menjadi saldo
+
+$unset digunakan untuk menghapus atribut disuatu data
+contoh db.users.updateOne({_id : ObjectId("63dca00ff452f188843cfc58")},{$unset:{utang:""}}) == mongodb cari data yang memiliki id ObjectId("63dca00ff452f188843cfc58") dan hapus atribut utang/set utang : ""
+
+$push untuk memasukan data kedalam suatu atribut yang memiliki tipe data array
+db.users.updateOne({_id:ObjectId("63dc7a01f452f188843cfc52")},{$push:{hobbies:"sleep"}}) == mongodb cari data yang memiliki id ObjectId("63dc7a01f452f188843cfc52") dan tambah nilai di dalam hobbies dengan "sleep"
+
+$pull lawan dari syntax $push, dia menghapus nilai yang ada di suatu atribut yang memiliki tipe data array
+contoh db.users.updateOne({_id:ObjectId("63dc7a01f452f188843cfc52")},{$pull:{hobbies:"Gaming"}}) == mongodb cari data yang memiliki id ObjectId("63dc7a01f452f188843cfc52") dan hapus Gaming di dalam hobbies
+
+$updateMany == mengupdate spesifik data yang cocok 
+contoh db.users.updateMany({address:{$exists:false}},{$set:{address:''}}) == mongodb cari data yang tidak memiliki address dan set address : ""
+
+
+delete
+deleteOne == digunakan untuk menghapus 1 data 
+contoh db.users.deleteOne({saldo:{$exists:{true}}}) == mongodb cari data yang memiliki atribut saldo dan delete data tersebut
+
+deleteMany == menghapus data lebih dari 1 sekaligus
+contoh db.users.deleteMany({address:''}) == mongodb cari data yang memiliki address = '' dan hapus datanya
